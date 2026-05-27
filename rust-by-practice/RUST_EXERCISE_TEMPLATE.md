@@ -76,6 +76,7 @@ fn ex<NN>() {
 3. **题目说明以注释保留**：星级、说明、提示等原文放在文件顶部注释中
 4. **题号从01开始**：使用两位数编号（ex01, ex02, ...）保持排序整齐
 5. **网页中有辅助函数的**：与题目放在同一个测试文件中（如 ex04 旁边的 `define_x` 函数）
+6. **网页代码包含 `use crate::*` 的**：不能简单地把全部代码塞进 `fn exNN() {}` 里。`use crate::SomeType::*` 要求 `SomeType` 是 crate 级别的项，但函数内部的定义不是。解决办法：将类型定义、impl 块和 `use` 语句提升到测试文件模块级别（`fn exNN()` 之外），仅把 `fn main()` 及其内部逻辑保留在 `fn exNN()` 内。特别注意 `cargo init` 创建的项目名可能和 Rust 关键字冲突（如 `enum`），需要用 `--name` 指定非关键字名称
 
 ## 使用方式
 
@@ -87,7 +88,7 @@ AI 将执行：
 1. 从 URL 路径提取嵌套文件夹名（如 `variables.html` → `variables`，`basic-types/numbers.html` → `basic-types/numbers`）
 2. 用 WebFetch 抓取网页内容
 3. 逐层创建文件夹（多级路径时先建父级，再建子级）
-4. 在最后一级文件夹内用 `cargo init` 创建独立的 Cargo 项目
+4. 在最后一级文件夹内用 `cargo init` 创建独立的 Cargo 项目（如果文件夹名是 Rust 关键字如 `enum`，需加 `--name` 指定别名）
 5. 按规范将每道题写入 `tests/exNN.rs`
 6. 写入 `src/lib.rs`（来源 + 运行说明）和 `src/main.rs`
 7. 用 `cargo check` 验证项目结构正常
